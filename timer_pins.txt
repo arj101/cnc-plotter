@@ -1,0 +1,17 @@
+in use
+------------
+TIM2 -> alternative: TIM5
+TIM4
+TIM1
+TIM3
+TIM17
+
+new
+------------
+TIM2: (32 bit)
+	CH1 -> PA5
+	CH2 -> PB3
+
+TIM8: (16 bit)
+	CH1 -> PC6
+	CH2 -> PC7

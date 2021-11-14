@@ -1,0 +1,62 @@
+[package]
+authors = ["ge9x"]
+edition = "2018"
+readme = "README.md"
+name = "cnc-plotter"
+version = "0.1.0"
+
+[dependencies]
+cortex-m = "0.7"
+cortex-m-rt = "0.6.10"
+cortex-m-semihosting = "0.3.3"
+panic-halt = "0.2.0"
+stm32h7xx-hal = {version = "0.10.0", features = ["stm32h743v", "rt", "usb_hs", "rm0433", "ethernet"], git="https://github.com/stm32-rs/stm32h7xx-hal"}
+panic-semihosting = "0.5"
+usb-device = "0.2"
+usbd-serial = "0.1"
+defmt = "0.2"
+synopsys-usb-otg = "0.2"
+micromath = "2.0"
+heapless = { version = "0.6", default-features = true }
+embedded-timeout-macros = "0.3"
+nb = "1.0"
+void = { version = "1.0.2", default-features = false }
+gcode = { version = "0.6", default-features = false }
+
+[dependencies.stm32h7]
+version = "0.14.0"
+features = ["stm32h743v", "rt"]
+
+[dependencies.smoltcp]
+version = "0.7.1"
+default-features = false
+features = ["ethernet", "proto-ipv4", "proto-ipv6", "socket-raw", "socket-udp"]
+
+
+# Uncomment for the panic example.
+# panic-itm = "0.4.1"
+
+# Uncomment for the allocator example.
+# alloc-cortex-m = "0.4.0"
+
+# Uncomment for the device example.
+# Update `memory.x`, set target to `thumbv7em-none-eabihf` in `.cargo/config`,
+# and then use `cargo build --examples device` to build it.
+# [dependencies.stm32f3]
+# features = ["stm32f303", "rt"]
+# version = "0.7.1"
+
+# this lets you use `cargo fix`!
+[[bin]]
+name = "cnc-plotter"
+test = false
+bench = false
+
+[profile.release]
+codegen-units = 1 # better optimizations
+# debug = true # symbols are nice and they don't increase the size on Flash
+lto = true # better optimizations
+opt-level = 3
+
+[profile.release.package."*"]
+opt-level = 3
