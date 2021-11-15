@@ -2,17 +2,17 @@ use super::servo_pwm::ServoPwm;
 
 use crate::ethernet::global_ethernet::eth_send;
 
+use core::cmp::PartialEq;
+use core::marker::Copy;
 use embedded_timeout_macros::embedded_hal::digital::v2::OutputPin;
 use stm32h7::stm32h743v::lptim1::isr::DOWN_A;
 use stm32h7::stm32h743v::I2C1;
 use stm32h7xx_hal::gpio::{self, Alternate, Output, PushPull, AF4};
 use stm32h7xx_hal::i2c::I2c;
+use stm32h7xx_hal::prelude::*;
 use stm32h7xx_hal::pwm::{self, Pwm};
 use stm32h7xx_hal::rcc::rec::{I2c1, Tim3};
 use stm32h7xx_hal::rcc::{CoreClocks, PeripheralREC};
-use stm32h7xx_hal::prelude::*;
-use core::cmp::PartialEq;
-use core::marker::Copy;
 
 const PEN_DRIVER_ADDR: u8 = 0x8;
 pub const UP_ANGLE: u8 = 60;
@@ -24,7 +24,7 @@ pub enum PenPosition {
 }
 
 // #[repr(transparent)]
-pub struct PenDriver{
+pub struct PenDriver {
     i2c: I2c<I2C1>,
     pos: PenPosition,
 }
@@ -35,7 +35,7 @@ impl PenDriver {
         scl: gpio::gpiob::PB8<Alternate<AF4>>,
         sda: gpio::gpiob::PB9<Alternate<AF4>>,
         prec: I2c1,
-        clocks: &CoreClocks
+        clocks: &CoreClocks,
     ) -> Self {
         Self {
             i2c: i2c.i2c((scl, sda), 100.khz(), prec, clocks),
@@ -54,7 +54,7 @@ impl PenDriver {
             PenPosition::Default => {
                 self.move_up();
                 self.pos = PenPosition::Default;
-            },
+            }
             PenPosition::Angle(a) => self.set_angle(a),
         }
     }

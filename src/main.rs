@@ -3,13 +3,11 @@
 
 mod buf_writer;
 mod com;
+mod command_handler;
+pub mod ethernet;
+pub mod interpolator;
 mod motion_controller_2;
 mod motion_controller_advanced;
-pub mod speed_calc;
-pub mod stop_timer;
-pub mod ethernet;
-mod command_handler;
-pub mod interpolator;
 pub mod opto;
 pub mod opto_encoder;
 pub mod pen;
@@ -18,6 +16,8 @@ pub mod pwm_duty;
 pub mod sequence;
 mod sequence_data;
 pub mod sequence_wrapper;
+pub mod speed_calc;
+pub mod stop_timer;
 mod usb_com;
 pub mod x_axis;
 pub mod y_axis;
@@ -181,16 +181,9 @@ fn main() -> ! {
         200.hz(), //45Hz
     ));
 
-
     let scl = gpiob.pb8.into_alternate_af4().set_open_drain();
     let sda = gpiob.pb9.into_alternate_af4().set_open_drain();
-    let mut pen_driver = PenDriver::new(
-        dp.I2C1,
-        scl,
-        sda,
-        ccdr.peripheral.I2C1,
-        &ccdr.clocks,
-    );
+    let mut pen_driver = PenDriver::new(dp.I2C1, scl, sda, ccdr.peripheral.I2C1, &ccdr.clocks);
 
     let synchronizer = MotionController::new(
         MotorPwmX(motor_pwm_x),

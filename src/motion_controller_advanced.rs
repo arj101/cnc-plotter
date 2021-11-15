@@ -1,10 +1,10 @@
-use crate::timestamp;
 use crate::com::CommandHandler;
 use crate::pen::pen_driver::PenDriver;
 use crate::pen::PenPosition;
 use crate::pwm::{MotorPwmX, MotorPwmY};
 use crate::sequence_wrapper::SequenceWrapper;
 use crate::stop_timer::StopTimer;
+use crate::timestamp;
 
 use crate::opto_encoder::Encoder;
 use crate::speed_calc::PulseContedSpeedCalc;
@@ -123,7 +123,7 @@ impl MotionController {
             }
             cmd.clear_gcode_buffer();
         }
-   
+
         if !self.sequence.is_running()
             || self.sequence.sequence.sequence_len() <= 1
             || self.stop_timer.is_running()
@@ -151,7 +151,9 @@ impl MotionController {
             dir_y = 0.0;
         }
 
-        if (((cx >= x2 && dir_x > 0.0) || (cx <= x2 && dir_x < 0.0) || dir_x == 0.0) && ((cy >= y2 && dir_y > 0.0) || (cy <= y2 && dir_y < 0.0) || dir_y == 0.0)) || (dir_x == 0.0 && dir_y == 0.0){
+        if ((cx >= x2 && dir_x > 0.0) || (cx <= x2 && dir_x < 0.0) || dir_x == 0.0)
+            && ((cy >= y2 && dir_y > 0.0) || (cy <= y2 && dir_y < 0.0) || dir_y == 0.0)
+        {
             if let None = self.sequence.advance() {
                 self.x_stop();
                 self.y_stop();
@@ -167,30 +169,33 @@ impl MotionController {
         let mut t = self.int_idx / len;
         let (de_x, mut de_y) = (x1 + di_x * t, y1 + di_y * t);
 
-        // eth_send!("di_x: {}, di_y: {}\n", di_x, di_y);
-        // eth_send!("de_x: {}, de_y: {}, x: {}, y: {}\n", de_x, de_y, self.x_opto.pos(), self.y_opto.pos());
-
         if self.x_opto.pos() as f32 == de_x && self.y_opto.pos() as f32 == de_y {
             self.int_idx += 1.0;
             self.move_x(dir_x, 36.0);
             self.move_y(dir_y, 18.0);
-        } else if ((self.y_opto.pos() as f32) < de_y && dir_y > 0.0) || ((self.y_opto.pos() as f32) > de_y && dir_y < 0.0) {
+        } else if ((self.y_opto.pos() as f32) < de_y && dir_y > 0.0)
+            || ((self.y_opto.pos() as f32) > de_y && dir_y < 0.0)
+        {
             self.x_stop();
             self.move_y(dir_y, 18.0);
-        } else if ((self.x_opto.pos() as f32) < de_x && dir_x > 0.0) || ((self.x_opto.pos() as f32) > de_x && dir_x < 0.0) {
+        } else if ((self.x_opto.pos() as f32) < de_x && dir_x > 0.0)
+            || ((self.x_opto.pos() as f32) > de_x && dir_x < 0.0)
+        {
             self.y_stop();
             self.move_x(dir_x, 36.0);
-        } 
-        else {
-            if ((self.x_opto.pos() as f32) > de_x && dir_x > 0.0) || ((self.x_opto.pos() as f32) < de_x && dir_x < 0.0) {
-                t = (cx-x1) / di_x;
+        } else {
+            if ((self.x_opto.pos() as f32) > de_x && dir_x > 0.0)
+                || ((self.x_opto.pos() as f32) < de_x && dir_x < 0.0)
+            {
+                t = (cx - x1) / di_x;
                 self.int_idx = t * len;
                 de_y = y1 + di_y * t;
-                // eth_send!("here2 t: {} cx: {}, x1: {}, int: {}, di_x: {}\n", t, cx, x1, self.int_idx, di_x);
             }
 
-            if ((self.y_opto.pos() as f32) > de_y && dir_y > 0.0) || ((self.y_opto.pos() as f32) < de_y && dir_y < 0.0) {
-                t = (cy-y1) / di_y;
+            if ((self.y_opto.pos() as f32) > de_y && dir_y > 0.0)
+                || ((self.y_opto.pos() as f32) < de_y && dir_y < 0.0)
+            {
+                t = (cy - y1) / di_y;
                 self.int_idx = t * len;
             }
         }

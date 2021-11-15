@@ -101,7 +101,9 @@ impl<ENC: Encoder> PulseContedSpeedCalc<ENC> {
                 / ((timestamp() - self.last_sample_time) as f32 / 1000_000.0);
             self.last_sample_time = timestamp();
             self.last_pos = self.encoder.pos();
-        } else if (timestamp() - self.last_sample_time > 100.millis() && pwm_speed <= 10.0) || timestamp() - self.last_sample_time > 200.millis() {
+        } else if (timestamp() - self.last_sample_time > 100.millis() && pwm_speed <= 10.0)
+            || timestamp() - self.last_sample_time > 200.millis()
+        {
             self.speed = 0.0
         }
     }

@@ -5,7 +5,6 @@ use crate::ethernet::ethernet_wrapper::EthernetWrapper;
 use crate::BufWriter;
 use cortex_m_semihosting::hprintln;
 
-
 use crate::ethernet::global_ethernet;
 use global_ethernet::eth_send;
 
